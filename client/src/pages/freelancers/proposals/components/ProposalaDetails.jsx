@@ -14,8 +14,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-const SERVER_URL =
-  import.meta.env.VITE_APP_SERVER_URL || "http://localhost:5000";
+const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
 function ProposalaDetails() {
   const { id } = useParams();
@@ -417,9 +416,9 @@ function ProposalaDetails() {
                     className="h-12 w-12 rounded-xl object-cover"
                   />
                 ) : ( */}
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400">
-                    <User size={22} />
-                  </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400">
+                  <User size={22} />
+                </div>
                 {/* )} */}
 
                 <div>

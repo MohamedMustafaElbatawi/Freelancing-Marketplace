@@ -1,6 +1,7 @@
 import axios from "axios";
+const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
 
-const API_URL = "http://localhost:5000/api/client";
+const API_URL = `${URL_SERVER}/api/client`;
 
 // =====================================================
 // Get All Client Proposals

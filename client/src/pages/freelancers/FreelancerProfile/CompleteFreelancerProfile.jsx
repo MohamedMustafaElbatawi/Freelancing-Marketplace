@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import ProfilePhotoUpload from "@/components/onboardingFreelancer/ProfilePhotoUpload";
 import OnboardingSidebar from "@/components/onboardingFreelancer/OnboardingSidebar";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
 const initialFormData = {
   // Personal Information
@@ -268,7 +268,7 @@ export default function CompleteFreelancerProfile() {
       }
 
       const response = await axios.patch(
-        `${apiUrl}/profile/complete-freelancer`,
+        `${SERVER_URL}/api/auth/profile/complete-freelancer`,
         data,
         {
           withCredentials: true,

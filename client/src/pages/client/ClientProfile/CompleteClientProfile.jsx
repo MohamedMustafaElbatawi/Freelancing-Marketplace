@@ -6,7 +6,7 @@ import PersonalInfoStep from "../../../components/onboardingClient/PersonalInfoS
 import CompanyInfoStep from "../../../components/onboardingClient/CompanyInfoStep";
 import AboutStep from "../../../components/onboardingClient/AboutStep";
 import SuccessStep from "../../../components/onboardingClient/SuccessStep";
-const apiUrl = import.meta.env.VITE_API_URL;
+const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 const initialFormData = {
   profilePhoto: null,
   fullName: "",
@@ -98,7 +98,7 @@ export default function CompleteProfile() {
         data.append("companyLogo", formData.companyLogo);
       }
 
-      const response = await axios.patch(`${apiUrl}/profile/complete`, data, {
+      const response = await axios.patch(`${SERVER_URL}/api/auth/profile/complete`, data, {
         withCredentials: true,
       });
 

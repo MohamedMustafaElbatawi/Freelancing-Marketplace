@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 const SERVER_URL =
-  import.meta.env.VITE_APP_SERVER_URL || "http://localhost:5000";
+  import.meta.env.VITE_APP_SERVER_URL;
 
 function DetailsJob() {
   const { id } = useParams();

@@ -56,7 +56,9 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
+const API_URL = `${URL_SERVER}/api`;
 
 // ==========================================
 // Get Conversations

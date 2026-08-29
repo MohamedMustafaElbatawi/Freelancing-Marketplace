@@ -25,7 +25,7 @@ export default function ProfileHeader({ profile }) {
       formData.append("profilePhoto", file);
 
       const response = await axios.patch(
-        "http://localhost:5000/api/auth/profile/freelancer-photo",
+        `${SERVER_URL}/api/auth/profile/freelancer-photo`,
         formData,
         {
           withCredentials: true,

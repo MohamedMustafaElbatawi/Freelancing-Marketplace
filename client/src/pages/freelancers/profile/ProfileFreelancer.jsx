@@ -68,7 +68,6 @@ const education = [
 ];
 
 export default function ProfileFreelancer() {
-  const URL = import.meta.env.VITE_API_URL;
   const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
   const [profile, setProfile] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -142,7 +141,11 @@ export default function ProfileFreelancer() {
           <SkillsSection skills={skills} profile={profile} />
           {/* واقف هنا */}
           {/* Projects */}
-          <ProjectsSection projects={projects} loading={loading} profile={profile} />
+          <ProjectsSection
+            projects={projects}
+            loading={loading}
+            profile={profile}
+          />
           {/* Work Experience */}
           <ExperienceSection
             experiences={[

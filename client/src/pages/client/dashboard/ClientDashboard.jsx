@@ -2,7 +2,6 @@
 // import axios from "axios";
 
 // export default function Dashboard() {
-//   const apiUrl = import.meta.env.VITE_API_URL;
 //   const [user, setUser] = useState(null);
 //   const [loading, setLoading] = useState(true);
 
@@ -45,6 +44,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 const ClientDashboard = () => {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   const navigate = useNavigate();
 
   const [conversations, setConversations] = useState([]);
@@ -171,7 +172,7 @@ const ClientDashboard = () => {
     try {
       setLoadingMessages(true);
 
-      const response = await fetch("http://localhost:5000/api/conversations", {
+      const response = await fetch(`${URL_SERVER}/api/conversations`, {
         method: "GET",
         credentials: "include",
       });
@@ -632,7 +633,7 @@ const ClientDashboard = () => {
 
                         {otherUser.profilePhoto ? (
                           <img
-                            src={`http://localhost:5000/${otherUser.profilePhoto.replace(
+                            src={`${URL_SERVER}/${otherUser.profilePhoto.replace(
                               /\\/g,
                               "/",
                             )}`}

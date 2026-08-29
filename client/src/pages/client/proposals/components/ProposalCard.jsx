@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 
 function ProposalCard({ proposal, onView, onAccept, onReject, actionLoading }) {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   const freelancer = proposal?.freelancer;
   const job = proposal?.job;
 
@@ -40,7 +42,7 @@ function ProposalCard({ proposal, onView, onAccept, onReject, actionLoading }) {
 
           {freelancer?.profilePhoto ? (
             <img
-              src={`http://localhost:5000/${freelancer.profilePhoto.replaceAll(
+              src={`${URL_SERVER}/${freelancer.profilePhoto.replaceAll(
                 "\\",
                 "/",
               )}`}

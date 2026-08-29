@@ -17,7 +17,9 @@ import {
   Check,
 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api";
+const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
+const API_URL = `${URL_SERVER}/api`;
 
 function SettingsFreelancer() {
   const [activeSection, setActiveSection] = useState("account");

@@ -9,8 +9,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const SERVER_URL =
-  import.meta.env.VITE_APP_SERVER_URL || "http://localhost:5000";
+const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
 function MyProposals() {
   const navigate = useNavigate();

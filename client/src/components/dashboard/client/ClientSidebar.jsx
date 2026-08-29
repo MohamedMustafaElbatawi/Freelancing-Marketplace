@@ -3,11 +3,13 @@ import { sidebarLinks, bottomLinks } from "../../../data/dashboardData";
 import axios from "axios";
 
 export default function ClientSidebar() {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   const navigate = useNavigate();
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        `${URL_SERVER}/api/auth/logout`,
         {},
         {
           withCredentials: true,

@@ -12,6 +12,8 @@ import {
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 function ProposalDetailsModal({ proposal, onClose }) {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   if (!proposal) {
     return null;
   }
@@ -59,7 +61,7 @@ function ProposalDetailsModal({ proposal, onClose }) {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 {freelancer?.profilePhoto ? (
                   <img
-                    src={`http://localhost:5000/${freelancer.profilePhoto.replaceAll(
+                    src={`${URL_SERVER}/${freelancer.profilePhoto.replaceAll(
                       "\\",
                       "/",
                     )}`}

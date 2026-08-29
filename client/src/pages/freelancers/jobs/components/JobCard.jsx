@@ -14,6 +14,8 @@ import JobInfo from "./JobInfo";
 import { useNavigate } from "react-router-dom";
 
 function JobCard({ job, saved, onSave }) {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   const navigate = useNavigate();
   // =========================
   // Client Data
@@ -94,7 +96,7 @@ function JobCard({ job, saved, onSave }) {
           <div className="hidden h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg font-bold text-white sm:flex">
             {job?.client?.profilePhoto ? (
               <img
-                src={`http://localhost:5000/${job.client.profilePhoto}`}
+                src={`${URL_SERVER}/${job.client.profilePhoto}`}
                 alt={clientName}
                 className="h-full w-full object-cover"
                 onError={(e) => {
@@ -230,8 +232,9 @@ function JobCard({ job, saved, onSave }) {
           </button>
 
           <button
-               onClick={() => navigate(`/freelancer/apply-job/${job._id}`)}
-          className=" cursor-pointer h-10 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-700">
+            onClick={() => navigate(`/freelancer/apply-job/${job._id}`)}
+            className=" cursor-pointer h-10 rounded-xl bg-indigo-600 px-5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-700"
+          >
             Apply Now
           </button>
         </div>

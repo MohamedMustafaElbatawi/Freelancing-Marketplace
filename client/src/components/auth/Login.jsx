@@ -19,7 +19,7 @@ import { useNavigate, Link } from "react-router-dom";
 export function Login() {
   const navigate = useNavigate();
 
-  const apiUrl = import.meta.env.VITE_API_URL;
+  const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -86,9 +86,13 @@ export function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${apiUrl}/login`, formLogin, {
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${SERVER_URL}/api/auth/login`,
+        formLogin,
+        {
+          withCredentials: true,
+        },
+      );
 
       console.log("Login Response:", response.data);
       console.log("Login id:", response.data.user._id);
@@ -210,7 +214,7 @@ export function Login() {
               type="button"
               variant="outline"
               // onClick={() => {
-              // window.location.href = `${apiUrl}/api/auth/google`;
+              // window.location.href = `${serverUrl}/api/auth/google`;
               // }}
               className="flex-1 py-2 px-4 text-sm font-semibold cursor-pointer bg-[#4285F4] text-white hover:bg-[#4285F4]/90"
             >
@@ -223,7 +227,7 @@ export function Login() {
               type="button"
               variant="outline"
               // onClick={() => {
-              //   window.location.href = `${apiUrl}/api/auth/github`;
+              //   window.location.href = `${serverUrl}/api/auth/github`;
               // }}
               className="flex-1 py-2 px-4 text-sm font-semibold cursor-pointer bg-[#24292f] text-white hover:bg-[#24292f]/90"
             >

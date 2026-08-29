@@ -10,8 +10,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-const SERVER_URL =
-  import.meta.env.VITE_APP_SERVER_URL || "http://localhost:5000";
+const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
 
 function ApplyJob() {
   const { id } = useParams();

@@ -1,16 +1,14 @@
 import React from "react";
 import { ArrowLeft, MoreVertical } from "lucide-react";
 
-function ChatHeaderFreelancer({
-  selectedConversation,
-  onBack,
-  currentUserId,
-}) {
+function ChatHeaderFreelancer({ selectedConversation, onBack, currentUserId }) {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   const getClient = () => {
     if (!selectedConversation?.participants?.length) return null;
 
     return selectedConversation.participants.find(
-      (user) => String(user?._id) !== String(currentUserId)
+      (user) => String(user?._id) !== String(currentUserId),
     );
   };
 
@@ -19,7 +17,7 @@ function ChatHeaderFreelancer({
   const image = client?.profilePhoto
     ? client.profilePhoto.startsWith("http")
       ? client.profilePhoto
-      : `http://localhost:5000/${client.profilePhoto.replaceAll("\\", "/")}`
+      : `${URL_SERVER}/${client.profilePhoto.replaceAll("\\", "/")}`
     : null;
 
   return (
@@ -53,9 +51,7 @@ function ChatHeaderFreelancer({
             {client?.fullName || client?.userName || "Client"}
           </h2>
 
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            Client
-          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Client</p>
         </div>
       </div>
 

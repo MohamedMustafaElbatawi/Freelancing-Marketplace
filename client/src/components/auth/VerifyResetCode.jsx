@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function VerifyResetCode() {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -45,7 +47,7 @@ export default function VerifyResetCode() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/reset-password",
+        `${URL_SERVER}/api/auth/reset-password`,
         {
           method: "POST",
           headers: {

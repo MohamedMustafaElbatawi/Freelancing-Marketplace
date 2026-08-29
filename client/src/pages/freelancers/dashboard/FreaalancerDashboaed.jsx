@@ -15,8 +15,9 @@ import {
   Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = `${URL_SERVER}/api`;
 
 function FreaalancerDashboaed() {
   const navigate = useNavigate();

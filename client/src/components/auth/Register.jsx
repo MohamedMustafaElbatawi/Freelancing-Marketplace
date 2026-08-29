@@ -5,8 +5,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 export default function Register() {
+  const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.VITE_API_URL;
   const [role, setRole] = useState("client");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -51,7 +51,10 @@ export default function Register() {
         return;
       }
       setLoading(true);
-      const response = await axios.post(`${apiUrl}/register`, data);
+      const response = await axios.post(
+        `${SERVER_URL}/api/auth/register`,
+        data,
+      );
 
       console.log(response.data);
       navigate("/login");
@@ -234,7 +237,6 @@ export default function Register() {
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>
-                    
                   </div>
                 </div>
 

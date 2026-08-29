@@ -49,7 +49,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
 export default function ForgotPassword() {
-  const ApiUrl = import.meta.env.VITE_API_URL;
+  const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -65,7 +65,7 @@ export default function ForgotPassword() {
 
     try {
       const response = await fetch(
-        `${ApiUrl}/forgot-password`,
+        `${SERVER_URL}/api/auth/forgot-password`,
         {
           method: "POST",
           headers: {

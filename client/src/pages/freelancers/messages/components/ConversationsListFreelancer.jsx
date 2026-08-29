@@ -9,11 +9,13 @@ function ConversationsListFreelancer({
   selectedConversation,
   currentUserId,
 }) {
+  const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
+
   const getOtherUser = (conversation) => {
     if (!conversation?.participants?.length) return null;
 
     return conversation.participants.find(
-      (user) => String(user?._id) !== String(currentUserId)
+      (user) => String(user?._id) !== String(currentUserId),
     );
   };
 
@@ -96,9 +98,9 @@ function ConversationsListFreelancer({
                       src={
                         client.profilePhoto.startsWith("http")
                           ? client.profilePhoto
-                          : `http://localhost:5000/${client.profilePhoto.replaceAll(
+                          : `${URL_SERVER}/${client.profilePhoto.replaceAll(
                               "\\",
-                              "/"
+                              "/",
                             )}`
                       }
                       alt={client?.fullName || "Client"}
