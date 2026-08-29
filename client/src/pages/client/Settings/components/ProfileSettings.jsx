@@ -110,12 +110,29 @@ export default function ProfileSettings() {
           bio: response.data.user.bio || "",
         });
 
-        const imagePath = response.data.user.profilePhoto?.replaceAll(
-          "\\",
-          "/",
-        );
+        // const imagePath = response.data.user.profilePhoto?.replaceAll(
+        //   "\\",
+        //   "/",
+        // );
+        // if (imagePath) {
+        //   setProfileImage(`${SERVER_URL}/${imagePath.replaceAll("\\", "/")}`);
+        // } else {
+        //   setProfileImage(null);
+        const imagePath = response.data.user.profilePhoto;
+
         if (imagePath) {
-          setProfileImage(`${SERVER_URL}/${imagePath.replaceAll("\\", "/")}`);
+          if (
+            imagePath.startsWith("http://") ||
+            imagePath.startsWith("https://")
+          ) {
+            setProfileImage(imagePath);
+          } else {
+            setProfileImage(
+              `${SERVER_URL}/${imagePath
+                .replaceAll("\\", "/")
+                .replace(/^\/+/, "")}`,
+            );
+          }
         } else {
           setProfileImage(null);
         }

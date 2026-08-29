@@ -126,6 +126,8 @@ function MessagesFreelancer() {
 
       const loadedConversations = response.conversations || [];
 
+      console.log("LOADED CONVERSATIONS:", loadedConversations);
+      console.log("PARTICIPANTS:", loadedConversations[0]?.participants);
       setConversations(loadedConversations);
 
       return loadedConversations;

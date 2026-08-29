@@ -2,6 +2,7 @@ const User = require("../models/UserSchema");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const cloudinary = require("../config/cloudinary");
 
 const me = async (req, res) => {
   try {
@@ -271,11 +272,73 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// const profileComplete = async (req, res) => {
+//   try {
+//     const {
+//       fullName,
+//       profilePhoto,
+//       phone,
+//       location,
+//       companyName,
+//       industry,
+//       companySize,
+//       bio,
+//       website,
+//       portfolio,
+//       linkedin,
+//       github,
+//     } = req.body;
+
+//     const user = await User.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "User not found",
+//       });
+//     }
+//     user.profilePhoto = profilePhoto;
+//     user.fullName = fullName;
+//     user.phone = phone;
+//     user.location = location;
+//     user.companyName = companyName;
+//     user.industry = industry;
+//     user.companySize = companySize;
+//     user.bio = bio;
+//     user.website = website;
+//     user.portfolio = portfolio;
+//     user.linkedin = linkedin;
+
+//     if (req.files?.profilePhoto) {
+//       user.profilePhoto = req.files.profilePhoto[0].path;
+//     }
+
+//     if (req.files?.companyLogo) {
+//       user.companyLogo = req.files.companyLogo[0].path;
+//     }
+
+//     user.profileCompleted = true;
+
+//     await user.save();
+
+//     const userResponse = user.toObject();
+
+//     delete userResponse.password;
+
+//     res.status(200).json({
+//       message: "Profile completed successfully",
+//       user: userResponse,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
+
 const profileComplete = async (req, res) => {
   try {
     const {
       fullName,
-      profilePhoto,
       phone,
       location,
       companyName,
@@ -295,7 +358,42 @@ const profileComplete = async (req, res) => {
         message: "User not found",
       });
     }
-    user.profilePhoto = profilePhoto;
+
+    // ==========================================
+    // Profile Photo -> Cloudinary
+    // ==========================================
+
+    if (req.files?.profilePhoto?.[0]) {
+      const file = req.files.profilePhoto[0];
+
+      const uploadToCloudinary = () =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "freelancing-marketplace/profiles",
+              resource_type: "image",
+            },
+            (error, result) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(result);
+              }
+            },
+          );
+
+          stream.end(file.buffer);
+        });
+
+      const result = await uploadToCloudinary();
+
+      user.profilePhoto = result.secure_url;
+    }
+
+    // ==========================================
+    // User Data
+    // ==========================================
+
     user.fullName = fullName;
     user.phone = phone;
     user.location = location;
@@ -306,14 +404,7 @@ const profileComplete = async (req, res) => {
     user.website = website;
     user.portfolio = portfolio;
     user.linkedin = linkedin;
-
-    if (req.files?.profilePhoto) {
-      user.profilePhoto = req.files.profilePhoto[0].path;
-    }
-
-    if (req.files?.companyLogo) {
-      user.companyLogo = req.files.companyLogo[0].path;
-    }
+    user.github = github;
 
     user.profileCompleted = true;
 
@@ -323,16 +414,90 @@ const profileComplete = async (req, res) => {
 
     delete userResponse.password;
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Profile completed successfully",
       user: userResponse,
     });
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    console.error("PROFILE COMPLETE ERROR:", error);
+
+    return res.status(500).json({
+      message: "Failed to complete profile",
+      error: error.message,
     });
   }
 };
+// const completeFreelancer = async (req, res) => {
+//   try {
+//     const {
+//       fullName,
+//       phone,
+//       location,
+//       professionalTitle,
+//       experienceLevel,
+//       yearsOfExperience,
+//       hourlyRate,
+//       bio,
+//       website,
+//       portfolio,
+//       github,
+//       linkedin,
+//     } = req.body;
+
+//     const user = await User.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "User not found",
+//       });
+//     }
+
+//     const skills = JSON.parse(req.body.skills || "[]");
+
+//     user.fullName = fullName;
+//     user.phone = phone;
+//     user.location = location;
+
+//     user.professionalTitle = professionalTitle;
+
+//     user.skills = skills;
+
+//     user.experienceLevel = experienceLevel;
+
+//     user.yearsOfExperience = yearsOfExperience;
+
+//     user.yearsOfExperience = Number(yearsOfExperience);
+
+//     user.hourlyRate = Number(hourlyRate);
+
+//     user.bio = bio;
+//     user.portfolio = portfolio;
+//     user.website = website;
+//     user.github = github;
+//     user.linkedin = linkedin;
+
+//     if (req.file) {
+//       user.profilePhoto = req.file.path;
+//     }
+
+//     user.profileCompleted = true;
+
+//     await user.save();
+
+//     const userResponse = user.toObject();
+
+//     delete userResponse.password;
+
+//     res.status(200).json({
+//       message: "Freelancer profile completed successfully",
+//       user: userResponse,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
 
 const completeFreelancer = async (req, res) => {
   try {
@@ -364,27 +529,44 @@ const completeFreelancer = async (req, res) => {
     user.fullName = fullName;
     user.phone = phone;
     user.location = location;
-
     user.professionalTitle = professionalTitle;
-
     user.skills = skills;
-
     user.experienceLevel = experienceLevel;
-
-    user.yearsOfExperience = yearsOfExperience;
-
     user.yearsOfExperience = Number(yearsOfExperience);
-
     user.hourlyRate = Number(hourlyRate);
-
     user.bio = bio;
     user.portfolio = portfolio;
     user.website = website;
     user.github = github;
     user.linkedin = linkedin;
 
+    // ==========================================
+    // Upload Freelancer Photo to Cloudinary
+    // ==========================================
+
     if (req.file) {
-      user.profilePhoto = req.file.path;
+      const uploadToCloudinary = () =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "freelancing-marketplace/freelancers",
+              resource_type: "image",
+            },
+            (error, result) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(result);
+              }
+            },
+          );
+
+          stream.end(req.file.buffer);
+        });
+
+      const result = await uploadToCloudinary();
+
+      user.profilePhoto = result.secure_url;
     }
 
     user.profileCompleted = true;
@@ -395,20 +577,59 @@ const completeFreelancer = async (req, res) => {
 
     delete userResponse.password;
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Freelancer profile completed successfully",
       user: userResponse,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("COMPLETE FREELANCER ERROR:", error);
+
+    return res.status(500).json({
       message: error.message,
     });
   }
 };
 
+// const updateFreelancerPhoto = async (req, res) => {
+//   try {
+//     const { file } = req;
+//     if (!file) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Profile photo is required",
+//       });
+//     }
+
+//     const user = await User.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+
+//     user.profilePhoto = file.path;
+
+//     await user.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Profile photo updated successfully",
+//       profilePhoto: user.profilePhoto,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error",
+//     });
+//   }
+// };
+
 const updateFreelancerPhoto = async (req, res) => {
   try {
     const { file } = req;
+
     if (!file) {
       return res.status(400).json({
         success: false,
@@ -425,19 +646,47 @@ const updateFreelancerPhoto = async (req, res) => {
       });
     }
 
-    user.profilePhoto = file.path;
+    // ==========================================
+    // Upload Freelancer Photo to Cloudinary
+    // ==========================================
+
+    const uploadToCloudinary = () =>
+      new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: "freelancing-marketplace/freelancers",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          },
+        );
+
+        stream.end(file.buffer);
+      });
+
+    const result = await uploadToCloudinary();
+
+    user.profilePhoto = result.secure_url;
 
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Profile photo updated successfully",
       profilePhoto: user.profilePhoto,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("UPDATE FREELANCER PHOTO ERROR:", error);
+
+    return res.status(500).json({
       success: false,
       message: "Server error",
+      error: error.message,
     });
   }
 };

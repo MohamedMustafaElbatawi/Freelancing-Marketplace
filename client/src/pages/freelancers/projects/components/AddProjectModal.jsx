@@ -42,7 +42,20 @@ export default function AddProjectModal({
       });
 
       if (project.image) {
-        setImagePreview(`${SERVER_URL}/${project.image.replaceAll("\\", "/")}`);
+        if (
+          project.image.startsWith("http://") ||
+          project.image.startsWith("https://")
+        ) {
+          setImagePreview(project.image);
+        } else {
+          setImagePreview(
+            `${SERVER_URL}/${project.image
+              .replaceAll("\\", "/")
+              .replace(/^\/+/, "")}`,
+          );
+        }
+      } else {
+        setImagePreview(null);
       }
     } else {
       setFormData({
@@ -206,8 +219,7 @@ export default function AddProjectModal({
     }
   };
 
-  if(loading) return <p>Loading...</p>;
-
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

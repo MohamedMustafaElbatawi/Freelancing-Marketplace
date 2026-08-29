@@ -15,9 +15,12 @@ function ChatHeaderFreelancer({ selectedConversation, onBack, currentUserId }) {
   const client = getClient();
 
   const image = client?.profilePhoto
-    ? client.profilePhoto.startsWith("http")
+    ? client.profilePhoto.startsWith("http://") ||
+      client.profilePhoto.startsWith("https://")
       ? client.profilePhoto
-      : `${URL_SERVER}/${client.profilePhoto.replaceAll("\\", "/")}`
+      : `${URL_SERVER}/${client.profilePhoto
+          .replaceAll("\\", "/")
+          .replace(/^\/+/, "")}`
     : null;
 
   return (

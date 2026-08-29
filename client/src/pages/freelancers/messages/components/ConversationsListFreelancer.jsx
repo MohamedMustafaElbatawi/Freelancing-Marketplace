@@ -96,15 +96,18 @@ function ConversationsListFreelancer({
                   {client?.profilePhoto ? (
                     <img
                       src={
-                        client.profilePhoto.startsWith("http")
+                        client.profilePhoto.startsWith("http://") ||
+                        client.profilePhoto.startsWith("https://")
                           ? client.profilePhoto
-                          : `${URL_SERVER}/${client.profilePhoto.replaceAll(
-                              "\\",
-                              "/",
-                            )}`
+                          : `${URL_SERVER}/${client.profilePhoto
+                              .replaceAll("\\", "/")
+                              .replace(/^\/+/, "")}`
                       }
                       alt={client?.fullName || "Client"}
                       className="h-full w-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
                     />
                   ) : (
                     client?.fullName?.charAt(0)?.toUpperCase() || "C"

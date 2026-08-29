@@ -18,6 +18,15 @@ import { useNavigate } from "react-router-dom";
 const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
 
 const API_URL = `${URL_SERVER}/api`;
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    return imagePath;
+  }
+
+  return `${URL_SERVER}/${imagePath.replaceAll("\\", "/").replace(/^\/+/, "")}`;
+};
 
 function FreaalancerDashboaed() {
   const navigate = useNavigate();
@@ -283,9 +292,7 @@ function FreaalancerDashboaed() {
               <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
                 {user?.profilePhoto ? (
                   <img
-                    src={`${API_URL.replace("/api", "")}/${user.profilePhoto
-                      .replaceAll("\\", "/")
-                      .replace(/^\/+/, "")}`}
+                    src={getImageUrl(user.profilePhoto)}
                     alt={user?.fullName || "Freelancer"}
                     className="h-full w-full object-cover"
                   />
@@ -539,12 +546,7 @@ function FreaalancerDashboaed() {
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
                         {client?.profilePhoto ? (
                           <img
-                            src={`${API_URL.replace(
-                              "/api",
-                              "",
-                            )}/${client.profilePhoto
-                              .replaceAll("\\", "/")
-                              .replace(/^\/+/, "")}`}
+                            src={getImageUrl(client.profilePhoto)}
                             alt={client.fullName || "Client"}
                             className="h-full w-full object-cover"
                           />

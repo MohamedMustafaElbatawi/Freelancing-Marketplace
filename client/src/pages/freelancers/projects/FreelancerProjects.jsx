@@ -39,6 +39,17 @@ import axios from "axios";
 
 export default function FreelancerProjects() {
   const SERVER_URL = import.meta.env.VITE_APP_SERVER_URL;
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+
+    if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+      return imagePath;
+    }
+
+    return `${SERVER_URL}/${imagePath
+      .replaceAll("\\", "/")
+      .replace(/^\/+/, "")}`;
+  };
   const [showAddModal, setShowAddModal] = useState(false);
 
   const [projects, setProjects] = useState([]);
@@ -132,7 +143,7 @@ export default function FreelancerProjects() {
               {/* Image */}
               <div className="relative h-48 overflow-hidden">
                 <img
-                  src={`${SERVER_URL}/${project.image}`}
+                  src={getImageUrl(project.image)}
                   alt={project.title}
                   className="w-full h-full object-cover"
                 />

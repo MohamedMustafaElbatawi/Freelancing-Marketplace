@@ -21,6 +21,16 @@ const URL_SERVER = import.meta.env.VITE_APP_SERVER_URL;
 
 const API_URL = `${URL_SERVER}/api`;
 
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+
+  if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+    return imagePath;
+  }
+
+  return `${URL_SERVER}/${imagePath.replaceAll("\\", "/").replace(/^\/+/, "")}`;
+};
+
 function SettingsFreelancer() {
   const [activeSection, setActiveSection] = useState("account");
 
@@ -194,9 +204,7 @@ function SettingsFreelancer() {
               <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
                 {user?.profilePhoto ? (
                   <img
-                    src={`${API_URL.replace("/api", "")}/${user.profilePhoto
-                      .replaceAll("\\", "/")
-                      .replace(/^\/+/, "")}`}
+                    src={getImageUrl(user.profilePhoto)}
                     alt={user?.fullName || "Freelancer"}
                     className="h-full w-full object-cover"
                   />
@@ -332,12 +340,7 @@ function SettingsFreelancer() {
                     <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
                       {user?.profilePhoto ? (
                         <img
-                          src={`${API_URL.replace(
-                            "/api",
-                            "",
-                          )}/${user.profilePhoto
-                            .replaceAll("\\", "/")
-                            .replace(/^\/+/, "")}`}
+                          src={getImageUrl(user.profilePhoto)}
                           alt={user?.fullName || "Freelancer"}
                           className="h-full w-full object-cover"
                         />

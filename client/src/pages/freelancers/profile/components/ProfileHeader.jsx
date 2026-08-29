@@ -53,9 +53,15 @@ export default function ProfileHeader({ profile }) {
                 src={
                   previewImage
                     ? previewImage
-                    : `${SERVER_URL}/${profile.profilePhoto.replaceAll("\\", "/")}`
+                    : profile?.profilePhoto?.startsWith("http")
+                      ? profile.profilePhoto
+                      : profile?.profilePhoto
+                        ? `${SERVER_URL}/${profile.profilePhoto
+                            .replaceAll("\\", "/")
+                            .replace(/^\/+/, "")}`
+                        : "/default-avatar.png"
                 }
-                alt={profile.fullName}
+                alt={profile?.fullName || "Profile"}
                 className="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg"
               />
 

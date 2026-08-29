@@ -69,7 +69,7 @@ exports.createJob = async (req, res) => {
       jobTitle,
       category,
       description,
-      paymentType, 
+      paymentType,
       currency,
       budget,
       duration,
@@ -338,6 +338,43 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+// exports.putProfile = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "User not found",
+//       });
+//     }
+
+//     user.fullName = req.body.fullName;
+//     user.email = req.body.email;
+//     user.companyName = req.body.companyName;
+//     user.industry = req.body.industry;
+//     user.website = req.body.website;
+//     user.bio = req.body.bio;
+
+//     if (req.file) {
+//       user.profilePhoto = req.file.path;
+//     }
+
+//     await user.save();
+
+//     res.status(200).json({
+//       message: "Profile updated successfully",
+//       user,
+//     });
+//   } catch (error) {
+//     console.error("UPDATE PROFILE ERROR:", error);
+
+//     res.status(500).json({
+//       message: "Failed to update profile",
+//       error: error.message,
+//     });
+//   }
+// };
+
 exports.putProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -348,6 +385,10 @@ exports.putProfile = async (req, res) => {
       });
     }
 
+    // ==========================================
+    // User Data
+    // ==========================================
+
     user.fullName = req.body.fullName;
     user.email = req.body.email;
     user.companyName = req.body.companyName;
@@ -355,20 +396,51 @@ exports.putProfile = async (req, res) => {
     user.website = req.body.website;
     user.bio = req.body.bio;
 
+    // ==========================================
+    // Profile Photo -> Cloudinary
+    // ==========================================
+
     if (req.file) {
-      user.profilePhoto = req.file.path;
+      const cloudinary = require("../config/cloudinary");
+
+      const uploadToCloudinary = () =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "freelancing-marketplace/clients",
+              resource_type: "image",
+            },
+            (error, result) => {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(result);
+              }
+            },
+          );
+
+          stream.end(req.file.buffer);
+        });
+
+      const result = await uploadToCloudinary();
+
+      user.profilePhoto = result.secure_url;
     }
 
     await user.save();
 
-    res.status(200).json({
+    const userResponse = user.toObject();
+
+    delete userResponse.password;
+
+    return res.status(200).json({
       message: "Profile updated successfully",
-      user,
+      user: userResponse,
     });
   } catch (error) {
     console.error("UPDATE PROFILE ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to update profile",
       error: error.message,
     });
@@ -430,6 +502,41 @@ exports.changePasswordInProfile = async (req, res) => {
   }
 };
 
+// exports.deleteProfilePhoto = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user._id);
+
+//     if (!user) {
+//       return res.status(404).json({
+//         message: "User not found",
+//       });
+//     }
+
+//     if (user.profilePhoto) {
+//       const imagePath = path.join(__dirname, user.profilePhoto);
+
+//       if (fs.existsSync(imagePath)) {
+//         fs.unlinkSync(imagePath);
+//       }
+//     }
+
+//     user.profilePhoto = "";
+
+//     await user.save();
+
+//     res.status(200).json({
+//       message: "Profile photo removed successfully",
+//     });
+//   } catch (error) {
+//     console.error("REMOVE PROFILE PHOTO ERROR:", error);
+
+//     res.status(500).json({
+//       message: "Failed to remove profile photo",
+//       error: error.message,
+//     });
+//   }
+// };
+
 exports.deleteProfilePhoto = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -440,11 +547,38 @@ exports.deleteProfilePhoto = async (req, res) => {
       });
     }
 
-    if (user.profilePhoto) {
-      const imagePath = path.join(__dirname, user.profilePhoto);
+    // ==========================================
+    // Delete Image From Cloudinary
+    // ==========================================
 
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+    if (user.profilePhoto) {
+      const cloudinary = require("../config/cloudinary");
+
+      // لو الصورة Cloudinary
+      if (user.profilePhoto.includes("res.cloudinary.com")) {
+        const urlParts = user.profilePhoto.split("/");
+
+        const uploadIndex = urlParts.indexOf("upload");
+
+        if (uploadIndex !== -1) {
+          let publicIdParts = urlParts.slice(uploadIndex + 1);
+
+          // إزالة version مثل v123456/
+          if (publicIdParts[0]?.startsWith("v")) {
+            publicIdParts.shift();
+          }
+
+          // إزالة extension
+          const lastPart = publicIdParts[publicIdParts.length - 1];
+
+          publicIdParts[publicIdParts.length - 1] = lastPart.split(".")[0];
+
+          const publicId = publicIdParts.join("/");
+
+          await cloudinary.uploader.destroy(publicId, {
+            resource_type: "image",
+          });
+        }
       }
     }
 
@@ -452,13 +586,15 @@ exports.deleteProfilePhoto = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
+      success: true,
       message: "Profile photo removed successfully",
     });
   } catch (error) {
     console.error("REMOVE PROFILE PHOTO ERROR:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
       message: "Failed to remove profile photo",
       error: error.message,
     });

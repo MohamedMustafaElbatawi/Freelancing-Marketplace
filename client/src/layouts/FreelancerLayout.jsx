@@ -3,6 +3,7 @@ import { useState } from "react";
 import Sidebar from "@/components/dashboard/freelancer/FreelancerSidebar";
 import Topbar from "@/components/dashboard/Topbar";
 import { X } from "lucide-react";
+import TopbarFreelancer from "@/components/dashboard/TopbarFreelancer";
 function FreelancerLayout() {
   const [open, setOpen] = useState(false);
 
@@ -38,7 +39,7 @@ function FreelancerLayout() {
 
       {/* باقي الصفحة */}
       <div className="flex-1 flex flex-col">
-        <Topbar setOpen={setOpen} open={open} />
+        <TopbarFreelancer setOpen={setOpen} open={open} />
 
         <main className="flex-1 p-6">
           <Outlet />

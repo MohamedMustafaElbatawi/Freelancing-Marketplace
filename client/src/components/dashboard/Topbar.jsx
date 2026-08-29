@@ -1,59 +1,138 @@
-import { Bell, CircleHelp, Menu, Plus, Search } from "lucide-react";
+import { Bell, CircleHelp, Menu, Plus, UserRound } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 export default function Topbar({ setOpen }) {
   const navigate = useNavigate();
+
+  const SERVER_URL =
+    import.meta.env.VITE_APP_SERVER_URL ;
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(`${SERVER_URL}/api/auth/me`, {
+          withCredentials: true,
+        });
+
+        setUser(response.data?.user || null);
+      } catch (error) {
+        console.error("GET CLIENT TOPBAR USER ERROR:", error);
+      }
+    };
+
+    fetchUser();
+  }, [SERVER_URL]);
+
+  const getProfileImage = () => {
+    if (!user?.profilePhoto) {
+      return null;
+    }
+
+    // Cloudinary URL
+    if (
+      user.profilePhoto.startsWith("http://") ||
+      user.profilePhoto.startsWith("https://")
+    ) {
+      return user.profilePhoto;
+    }
+
+    // Old local image path
+    return `${SERVER_URL}/${user.profilePhoto
+      .replaceAll("\\", "/")
+      .replace(/^\/+/, "")}`;
+  };
+
+  const profileImage = getProfileImage();
+
   return (
-    <header className="sticky top-0 z-40 bg-white border-b">
-      <div className="h-16 flex items-center justify-between px-4 lg:px-8 shadow-md">
+    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white dark:border-slate-800 dark:bg-slate-900">
+      <div className="flex h-16 items-center justify-between px-4 shadow-md lg:px-8">
         {/* Left */}
 
         <div className="flex items-center gap-4">
           {/* Mobile Menu */}
-          <nav className="">
-            <button
-              className="p-2 rounded hover:bg-gray-100 cursor-pointer lg:hidden transition-opacity duration-300 "
-              onClick={() => setOpen((prev) => !prev)}
-            >
-              <Menu size={24} />
-            </button>
-          </nav>
 
-          {/* Search */}
-          {/* <div className="flex items-center  gap-3 w-[150px] px-4 py-2 md:w-[420px]  border rounded-xl  ">
-            <Search size={18} className="text-gray-400 " id="search" />
+          <button
+            type="button"
+            className="rounded-lg p-2 transition hover:bg-gray-100 lg:hidden dark:hover:bg-slate-800"
+            onClick={() => setOpen((prev) => !prev)}
+            aria-label="Open menu"
+          >
+            <Menu size={24} />
+          </button>
 
-            <input
-              type="text"
-              id="search"
-              placeholder="Search talent, jobs"
-              className="outline-none flex-1 flex items-center w-full"
-            />
-          </div> */}
+          {/* Logo */}
 
-          <p>EliteLancer == logo</p>
+          <button
+            type="button"
+            onClick={() => navigate("/client/dashboard")}
+            className="text-left text-lg font-bold text-gray-900 dark:text-white"
+          >
+            <span className="text-blue-600 dark:text-blue-400">Elite</span>
+            Lancer
+          </button>
         </div>
 
         {/* Right */}
 
-        <div className="flex items-center gap-3 ">
-          <button className="hidden sm:flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl cursor-pointer hover:bg-blue-700">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Post Job */}
+
+          <button
+            type="button"
+            onClick={() => navigate("/client/post-job")}
+            className=" cursor-pointer hidden items-center gap-2 rounded-xl bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700 sm:flex"
+          >
             <Plus size={18} />
-            <span  onClick={() => navigate("/client/post-job")} >Post Job</span>
+            <span>Post Job</span>
           </button>
 
-          <button className="    w-10 h-10 rounded-full hover:bg-gray-100 flex justify-center items-center cursor-pointer">
+          {/* Notifications */}
+
+          <button
+            type="button"
+            onClick={() => navigate("/client/notifications")}
+            className="cursor-pointer flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-800"
+            title="Notifications"
+            aria-label="Notifications"
+          >
             <Bell size={20} />
           </button>
 
-          <button className="   hidden sm:flex w-10 h-10 rounded-full hover:bg-gray-100 flex justify-center items-center cursor-pointer">
+          {/* Help */}
+
+          <button
+            type="button"
+            className=" cursor-pointer hidden h-10 w-10 items-center justify-center rounded-full text-gray-600 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-800 sm:flex"
+            title="Help"
+            aria-label="Help"
+          >
             <CircleHelp size={20} />
           </button>
 
-          <img
-            src="https://i.pravatar.cc/150?img=12"
-            alt=""
-            className="w-11 h-11 rounded-full object-cover border cursor-pointer"
-          />
+          {/* Profile */}
+
+          <button
+            type="button"
+            onClick={() => navigate("/client/settings")}
+            className=" cursor-pointer flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-gray-200 bg-gray-100 transition hover:ring-2 hover:ring-blue-500 dark:border-slate-700 dark:bg-slate-800"
+            title="My Profile"
+            aria-label="My Profile"
+          >
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt={user?.fullName || "Client"}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <UserRound size={21} className="text-gray-400" />
+            )}
+          </button>
         </div>
       </div>
     </header>
